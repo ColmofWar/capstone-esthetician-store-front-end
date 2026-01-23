@@ -4,12 +4,20 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "start": "concurrently --kill-others \"npm run start-fe\" \"npm run start-be\"",
     "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "test": "npx vitest",
+    "test:watch": "npx vitest --watch",
+    "test:coverage": "npx vitest --coverage",
+    "test:ui": "npx vitest --ui",
+    "start-fe": "vite --port 3000",
+    "start-be": "json-server --watch db.json --delay 500 --port 3001"
   },
   "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "pg": "^8.16.3",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-router-dom": "^7.9.1"
@@ -23,6 +31,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.3.0",
+    "nodemon": "^3.1.11",
     "vite": "^7.1.2"
   }
 }
