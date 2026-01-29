@@ -1,8 +1,10 @@
 // src/components/CategoryList.jsx
+
 import React, { useEffect, useState } from "react";
+import "../css/CategoryList.css";
 import { apiRequest } from "../api";
 
-function CategoryList({ onSelectCategory }) {
+function CategoryList({ onSelectCategory, selectedCategory }) {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -29,11 +31,21 @@ function CategoryList({ onSelectCategory }) {
       <h2>Categories</h2>
       <ul>
         <li key="all">
-          <button onClick={() => onSelectCategory(null)}>All</button>
+          <button
+            className={!selectedCategory ? "selected" : ""}
+            onClick={() => onSelectCategory(null)}
+          >
+            All
+          </button>
         </li>
         {categories.map(cat => (
           <li key={cat.id}>
-            <button onClick={() => onSelectCategory(cat)}>{cat.name}</button>
+            <button
+              className={selectedCategory && selectedCategory.id === cat.id ? "selected" : ""}
+              onClick={() => onSelectCategory(cat)}
+            >
+              {cat.name}
+            </button>
           </li>
         ))}
       </ul>
