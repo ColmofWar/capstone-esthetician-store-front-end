@@ -3,19 +3,20 @@ import { Routes, Route } from 'react-router-dom';
 
 const Home = lazy(() => import('../components/Home'));
 const Shop = lazy(() => import('../components/Shop'));
-const Product = lazy(() => import('../components/Product'));
 const Profile = lazy(() => import('../components/Profile'));
 const Login = lazy(() => import('../components/Login'));
 const ShoppingCart = lazy(() => import('../components/ShoppingCart'));
+const ProductList = lazy(() => import('../components/ProductList'));
+const CategoryList = lazy(() => import('../components/CategoryList'));
 
 export default function AppRoutes() {
   return (
     <Suspense fallback={<div className="loading">Loading...</div>}>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/shop" element={<Shop />}>
-            <Route path="product/:name" element={<Product />} />
-        </Route>
+        <Route path="/shop" element={<Shop />}/>
+        <Route path="/products" element={<ProductList />} />
+        <Route path="/categories" element={<CategoryList />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/login" element={<Login />} />
         <Route path="/cart" element={<ShoppingCart />} />
