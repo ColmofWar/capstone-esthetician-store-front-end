@@ -24,7 +24,7 @@ dist-ssr
 *.sw?
 
 # Environment variables
-
+.env
 
 # SQL Database files
 seed.pg.sql
