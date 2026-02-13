@@ -1,11 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { useContext } from "react";
 import "../css/NavBar.css";
 import CartIcon from "../assets/CartIcon";
+import UserContext from "../UserContext";
 
 function NavBar({ cartCount = 0 }) {
     const [bump, setBump] = useState(false);
     const prevCount = useRef(cartCount);
+    const [username, setUsername] = useState(null);
+    const { currentUser, setToken, setCurrentUser } = useContext(UserContext);
 
     useEffect(() => {
         if (cartCount > 0 && prevCount.current !== cartCount) {
@@ -15,6 +19,11 @@ function NavBar({ cartCount = 0 }) {
         }
         prevCount.current = cartCount;
     }, [cartCount]);
+
+    useEffect(() => {
+        const user = localStorage.getItem("username");
+        setUsername(user);
+    }, []);
 
     return (
     <nav className="navbar">
@@ -40,9 +49,21 @@ function NavBar({ cartCount = 0 }) {
                     </div>
                 </Link>
             </div>
-
+                    
             <div style={{display: 'flex', alignItems: 'center', gap: '0.75rem'}}>
-                <Link to="/login" className="navbar__cta">Login</Link>
+                {currentUser ? (
+                    <button
+                        className="navbar__cta"
+                        onClick={() => {
+                            setToken(null);
+                            setCurrentUser(null);
+                            localStorage.removeItem("token");
+                            localStorage.removeItem("username");
+                        }}
+                    >Logout</button>
+                ) : (
+                    <Link to="/auth" className="navbar__cta">Login / Signup</Link>
+                )}
                 <button className="navbar__menu-toggle" aria-label="Open menu">☰</button>
             </div>
         </div>
