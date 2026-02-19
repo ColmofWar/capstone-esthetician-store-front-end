@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { apiRequest } from "../api";
-import useLocalStorage from "../hooks/useLocalStorage";
 import { useNavigate } from "react-router-dom";
 
 
@@ -13,7 +12,7 @@ function Signup({ onSignup }) {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
-    const [token, setToken] = useLocalStorage("token", null);
+    // setToken will be provided by context in App.jsx
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -32,6 +31,16 @@ function Signup({ onSignup }) {
             });
             setToken(res.token);
             setSuccess(true);
+            // Decode token to get username
+            const payload = JSON.parse(atob(res.token.split('.')[1]));
+            // Fetch full user object and store in localStorage
+            try {
+                const user = await apiRequest(`/users/${payload.username}`);
+                localStorage.setItem("user", JSON.stringify(user));
+            } catch (e) {
+                // fallback: store username only if user fetch fails
+                localStorage.setItem("user", JSON.stringify({ username: payload.username }));
+            }
             navigate("/");
         } catch (err) {
             setError(err.message || "Signup failed");

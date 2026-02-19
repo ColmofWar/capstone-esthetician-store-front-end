@@ -1,13 +1,12 @@
-import React from "react";
-import useLocalStorage from "../hooks/useLocalStorage";
+import React, { useContext } from "react";
+import UserContext from "../UserContext";
 
 function Home() {
-    const [username] = useLocalStorage("username", null);
-    console.log("Home page username:", username);
+    const { currentUser } = useContext(UserContext);
     return (
         <div>
             <h1>
-                {username ? `Welcome, ${username}!` : "Welcome to the Home Page"}
+                {currentUser ? `Welcome, ${currentUser.username}!` : "Welcome to the Home Page"}
             </h1>
         </div>
     );

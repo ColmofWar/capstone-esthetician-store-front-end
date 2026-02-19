@@ -8,7 +8,6 @@ import UserContext from "../UserContext";
 function NavBar({ cartCount = 0 }) {
     const [bump, setBump] = useState(false);
     const prevCount = useRef(cartCount);
-    const [username, setUsername] = useState(null);
     const { currentUser, setToken, setCurrentUser } = useContext(UserContext);
 
     useEffect(() => {
@@ -20,10 +19,7 @@ function NavBar({ cartCount = 0 }) {
         prevCount.current = cartCount;
     }, [cartCount]);
 
-    useEffect(() => {
-        const user = localStorage.getItem("username");
-        setUsername(user);
-    }, []);
+     console.log("Current user in NavBar:", currentUser); // Debug log
 
     return (
     <nav className="navbar">
@@ -51,6 +47,7 @@ function NavBar({ cartCount = 0 }) {
             </div>
                     
             <div style={{display: 'flex', alignItems: 'center', gap: '0.75rem'}}>
+
                 {currentUser ? (
                     <button
                         className="navbar__cta"

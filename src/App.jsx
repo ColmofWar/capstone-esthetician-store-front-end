@@ -9,30 +9,29 @@ import { apiRequest } from "./api";
 
 function App() {
   const [token, setToken] = useLocalStorage("token", null);
+  const [username] = useLocalStorage("username", null);
   const [currentUser, setCurrentUser] = useState(null);
   const [infoLoaded, setInfoLoaded] = useState(false);
 
   useEffect(() => {
-    async function getUser() {
-      setInfoLoaded(false);
-      
-      if (token) {
-        try {
-          const payload = JSON.parse(atob(token.split(".")[1]));
-          console.log("Decoded token payload:", payload);
-          console.log("Fetching user data for:", payload.username);
-          const user = await apiRequest(`/users/${payload.username}`);
-          setCurrentUser(user);
-        } catch (err) {
+    setInfoLoaded(false);
+    if (token && username) {
+      try {
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+          const userObj = JSON.parse(storedUser);
+          setCurrentUser({ ...userObj, token });
+        } else {
           setCurrentUser(null);
         }
-      } else {
+      } catch (err) {
         setCurrentUser(null);
       }
-      setInfoLoaded(true);
+    } else {
+      setCurrentUser(null);
     }
-    getUser();
-  }, [token]);
+    setInfoLoaded(true);
+  }, [token, username]);
 
   return (
     <>

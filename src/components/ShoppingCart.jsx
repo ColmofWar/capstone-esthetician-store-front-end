@@ -1,18 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { apiRequest } from "../api";
-import useLocalStorage from "../hooks/useLocalStorage";
 import useAddToCart from "../hooks/useAddToCart";
+import UserContext from "../UserContext";
 
 function ShoppingCart() {
     const [cart, setCart] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [username] = useLocalStorage("username", null);
+    const { currentUser } = useContext(UserContext);
     const { addToCart, loading: addLoading, error: addError } = useAddToCart();
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (!token || !username) {
+        if (!currentUser) {
             setLoading(false);
             return;
         }
@@ -20,10 +19,12 @@ function ShoppingCart() {
             setLoading(true);
             setError(null);
             try {
-                const res = await apiRequest(`/shopping_cart_items/${username}`, {
+                const res = await apiRequest(`/shopping_cart_items/${currentUser.username}`, {
                     method: "get"
                 });
                 setCart(res.cart?.items || []);
+                console.log("Fetched cart:", res.cart);
+                console.log("Cart items:", res.cart?.items);
             } catch (err) {
                 setError(err.message || "Error loading cart");
             } finally {
@@ -31,13 +32,15 @@ function ShoppingCart() {
             }
         }
         fetchCart();
-    }, [username]);
+    }, [currentUser]);
 
 
     const handleRemove = async (itemId) => {
         try {
             const token = localStorage.getItem("token");
-            await apiRequest(`/shopping_cart_items/${username}/${itemId}`, {
+            console.log("Removing item with id:", itemId);
+            await apiRequest(`/shopping_cart_items/${currentUser.username}/${itemId}`, {
+                console: "Removing item with id:", itemId,
                 method: "delete"
             });
             setCart(cart.filter(item => item.id !== itemId));
@@ -64,7 +67,7 @@ function ShoppingCart() {
         if (addError) setError(addError);
     }, [addError]);
 
-    if (!username) {
+    if (!currentUser) {
         return (
             <div>
                 <h1>Your Shopping Cart</h1>

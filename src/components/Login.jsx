@@ -1,17 +1,17 @@
-import React, { useState } from "react";
-import useLocalStorage from "../hooks/useLocalStorage";
+import React, { useState, useContext } from "react";
 import { apiRequest } from "../api";
 import { useNavigate } from "react-router-dom";
+import UserContext from "../UserContext";
+import useLocalStorage from "../hooks/useLocalStorage";
 
-
-function Login({ onLogin }) {
+function Login() {
     const [username, setUsername] = useState("");
-    const [storedUsername, setStoredUsername] = useLocalStorage("username", null);
     const [password, setPassword] = useState("");
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [token, setToken] = useLocalStorage("token", null);
+    const { setToken } = useContext(UserContext);
     const navigate = useNavigate();
+    const [storedUsername, setStoredUsername] = useLocalStorage("username", null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -26,6 +26,14 @@ function Login({ onLogin }) {
             // Decode the token to get the username
             const payload = JSON.parse(atob(res.token.split('.')[1]));
             setStoredUsername(payload.username);
+            // Fetch full user object and store in localStorage
+            try {
+                const user = await apiRequest(`/users/${payload.username}`);
+                localStorage.setItem("user", JSON.stringify(user));
+            } catch (e) {
+                // fallback: store username only if user fetch fails
+                localStorage.setItem("user", JSON.stringify({ username: payload.username }));
+            }
             console.log("Login successful, token:", res.token);
             navigate("/");
         } catch (err) {
