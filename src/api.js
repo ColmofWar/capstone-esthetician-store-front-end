@@ -28,6 +28,7 @@ export async function apiRequest(endpoint, { data = {}, method = "get", params =
   // Get token from localStorage if present
   const token = localStorage.getItem("token")?.replace(/^"|"$/g, "");
   console.log("API Request:", method.toUpperCase(), endpoint, "Data:", data, "Params:");
+  console.log(token);
   const headers = {
     "Content-Type": "application/json",
   };
@@ -42,6 +43,7 @@ export async function apiRequest(endpoint, { data = {}, method = "get", params =
       data,
       headers,
     });
+    console.log("API Response:", response.data);
     return response.data;
   } catch (err) {
     if (err.response && err.response.data && err.response.data.error) {

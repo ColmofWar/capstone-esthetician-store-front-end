@@ -19,7 +19,7 @@ function NavBar({ cartCount = 0 }) {
         prevCount.current = cartCount;
     }, [cartCount]);
 
-     console.log("Current user in NavBar:", currentUser); // Debug log
+     // console.log("Current user in NavBar:", currentUser); // Debug log
 
     return (
     <nav className="navbar">
