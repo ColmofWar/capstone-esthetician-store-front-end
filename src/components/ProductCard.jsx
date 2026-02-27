@@ -15,15 +15,18 @@ function ProductCard({ product }) {
   const { addToCart, loading, error } = useAddToCart();
   const [quantity, setQuantity] = React.useState(1);
   if (!product) return null;
+  const [imgSrc, setImgSrc] = React.useState(`${product.image_url}`);
+  console.log("ProductCard render", { imgSrc });
   return (
     <div className="product-card">
-      {product.image_url && (
-        <img
-          src={product.image_url}
-          alt={product.alt_text || product.name}
-          className="product-card-image"
-        />
-      )}
+      <img
+        src={imgSrc || "/images/generic-product.jpg"}
+        alt={product.alt_text || product.name}
+        className="product-card-image"
+        onError={e => {
+          if (imgSrc !== "/images/generic-product.jpg") setImgSrc("/images/generic-product.jpg");
+        }}
+      />
       <div className="product-card-body">
         <h3 className="product-card-title">{product.name}</h3>
         <p className="product-card-brand">{product.brand}</p>
