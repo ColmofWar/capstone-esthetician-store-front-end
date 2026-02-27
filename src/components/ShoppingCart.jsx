@@ -1,9 +1,13 @@
 import React, { useEffect, useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiRequest } from "../api";
 import useAddToCart from "../hooks/useAddToCart";
 import UserContext from "../UserContext";
 
 function ShoppingCart() {
+        // ...existing code...
+        // Import useNavigate from react-router-dom
+        const navigate = useNavigate();
     const [cart, setCart] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -118,7 +122,15 @@ function ShoppingCart() {
                             </li>
                         ))}
                     </ul>
-                    <div style={{ fontWeight: 700, fontSize: "1.2rem", marginTop: 16 }}>Total: ${total.toFixed(2)}</div>
+                                        <div style={{ display: 'flex', alignItems: 'center', marginTop: 16 }}>
+                                            <div style={{ fontWeight: 700, fontSize: "1.2rem", marginRight: 24 }}>Total: ${total.toFixed(2)}</div>
+                                            <button
+                                                style={{ padding: '0.5rem 1.5rem', background: '#4caf50', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, fontSize: '1rem', cursor: 'pointer' }}
+                                                onClick={() => navigate('/order', { state: { cart } })}
+                                            >
+                                                Purchase
+                                            </button>
+                                        </div>
                 </div>
             )}
         </div>

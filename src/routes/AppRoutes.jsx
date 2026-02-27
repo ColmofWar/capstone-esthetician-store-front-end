@@ -7,6 +7,7 @@ const ShoppingCart = lazy(() => import('../components/ShoppingCart'));
 const ProductList = lazy(() => import('../components/ProductList'));
 const CategoryList = lazy(() => import('../components/CategoryList'));
 const AuthPage = lazy(() => import('../components/AuthPage'));
+const OrderPage = lazy(() => import('../components/OrderPage'));
 
 export default function AppRoutes() {
   return (
@@ -19,6 +20,7 @@ export default function AppRoutes() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/auth" element={<AuthPage onAuth={() => {}} />} />
         <Route path="/cart" element={<ShoppingCart />} />
+        <Route path="/order" element={<OrderPage />} />
         <Route path="*" element={<h1>404 Not Found</h1>} />
       </Routes>
     </Suspense>

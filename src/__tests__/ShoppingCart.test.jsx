@@ -2,6 +2,9 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import ShoppingCart from "../components/ShoppingCart";
 import UserContext from "../UserContext";
+import { MemoryRouter } from "react-router-dom";
+import OrderPage from "../components/OrderPage";
+import { Routes, Route } from "react-router-dom";
 
 // Mock useAddToCart
 jest.mock("../hooks/useAddToCart", () => () => ({
@@ -24,9 +27,11 @@ describe("ShoppingCart", () => {
 
   function renderCart(ctxOverrides = {}) {
     render(
-      <UserContext.Provider value={{ currentUser, ...ctxOverrides }}>
-        <ShoppingCart />
-      </UserContext.Provider>
+      <MemoryRouter>
+        <UserContext.Provider value={{ currentUser, ...ctxOverrides }}>
+          <ShoppingCart />
+        </UserContext.Provider>
+      </MemoryRouter>
     );
   }
 
@@ -91,6 +96,31 @@ describe("ShoppingCart", () => {
     fireEvent.change(selects[0], { target: { value: "3" } });
     await waitFor(() => {
       expect(selects[0]).toHaveValue("3");
+    });
+  });
+
+  it("navigates to OrderPage with cart state on Purchase", async () => {
+    apiRequest.mockResolvedValueOnce({ cart: { items: cartItems } });
+    render(
+      <MemoryRouter initialEntries={["/cart"]}>
+        <UserContext.Provider value={{ currentUser }}>
+          <Routes>
+            <Route path="/cart" element={<ShoppingCart />} />
+            <Route path="/order" element={<OrderPage />} />
+          </Routes>
+        </UserContext.Provider>
+      </MemoryRouter>
+    );
+    await waitFor(() => expect(screen.getByText("A")).toBeInTheDocument());
+    const purchaseBtn = screen.getByText(/Purchase/i);
+    fireEvent.click(purchaseBtn);
+    await waitFor(() => {
+      expect(screen.getByText(/Order Summary/)).toBeInTheDocument();
+      // Check cart summary list items
+      const summaryItems = screen.getAllByRole("listitem");
+      expect(summaryItems.some(li => li.textContent.includes("A") && li.textContent.includes("Qty: 2") && li.textContent.includes("Price: $10.00"))).toBe(true);
+      expect(summaryItems.some(li => li.textContent.includes("B") && li.textContent.includes("Qty: 1") && li.textContent.includes("Price: $20.00"))).toBe(true);
+      expect(screen.getByText((content) => content.includes("Final Total: $40.00"))).toBeInTheDocument();
     });
   });
 });

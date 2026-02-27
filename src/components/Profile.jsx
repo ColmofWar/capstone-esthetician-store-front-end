@@ -4,6 +4,21 @@ import UserContext from "../UserContext";
 
 function Profile() {
     const [profile, setProfile] = useState({ username: "", email: "", phone: "" });
+    const [profileErrors, setProfileErrors] = useState({});
+        // Profile validation helper
+        const validateProfile = (profile) => {
+            const errors = {};
+            if (!profile.username || !profile.username.trim()) errors.username = "Username is required.";
+            if (!profile.email || !profile.email.trim()) {
+                errors.email = "Email is required.";
+            } else if (!/^\S+@\S+\.\S+$/.test(profile.email)) {
+                errors.email = "Invalid email format.";
+            }
+            if (profile.phone && !/^\+?\d{10,15}$/.test(profile.phone)) {
+                errors.phone = "Invalid phone number.";
+            }
+            return errors;
+        };
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
@@ -16,6 +31,22 @@ function Profile() {
         addressLoading,
         addressError
     } = useContext(UserContext);
+    const [homeErrors, setHomeErrors] = useState({});
+    const [billingErrors, setBillingErrors] = useState({});
+    // Address validation helper
+    const validateAddress = (address) => {
+        const errors = {};
+        if (!address.street || !address.street.trim()) errors.street = "Street is required.";
+        if (!address.city || !address.city.trim()) errors.city = "City is required.";
+        if (!address.state || !address.state.trim()) errors.state = "State is required.";
+        if (!address.postal_code || !address.postal_code.trim()) {
+            errors.postal_code = "Postal code is required.";
+        } else if (!/^\d{5}(-\d{4})?$/.test(address.postal_code)) {
+            errors.postal_code = "Invalid postal code.";
+        }
+        if (!address.country || !address.country.trim()) errors.country = "Country is required.";
+        return errors;
+    };
 
     useEffect(() => {
         if (currentUser) {
@@ -42,6 +73,9 @@ function Profile() {
         e.preventDefault();
         setError(null);
         setSuccess(null);
+        const errors = validateProfile(profile);
+        setProfileErrors(errors);
+        if (Object.keys(errors).length > 0) return;
         try {
             await apiRequest(`/users/${profile.username}`, {
                 method: "patch",
@@ -60,9 +94,12 @@ function Profile() {
         e.preventDefault();
         setError(null);
         setSuccess(null);
+        const errors = validateAddress(homeAddress);
+        setHomeErrors(errors);
+        if (Object.keys(errors).length > 0) return;
         try {
             await apiRequest(`/address/${profile.username}/home`, {
-                method: "post",
+                method: "patch",
                 data: homeAddress
             });
             setSuccess("Home/shipping address updated!");
@@ -75,9 +112,12 @@ function Profile() {
         e.preventDefault();
         setError(null);
         setSuccess(null);
+        const errors = validateAddress(billingAddress);
+        setBillingErrors(errors);
+        if (Object.keys(errors).length > 0) return;
         try {
             await apiRequest(`/address/${profile.username}/billing`, {
-                method: "post",
+                method: "patch",
                 data: billingAddress,
             });
             setSuccess("Billing address updated!");
@@ -104,6 +144,7 @@ function Profile() {
                         disabled
                         style={{ width: "100%", padding: 8, marginTop: 4, background: "#f5f5f5" }}
                     />
+                    {profileErrors.username && <div style={{ color: "red", fontSize: 13 }}>{profileErrors.username}</div>}
                 </div>
                 <div style={{ marginBottom: 16 }}>
                     <label htmlFor="email">Email:</label>
@@ -116,6 +157,7 @@ function Profile() {
                         required
                         style={{ width: "100%", padding: 8, marginTop: 4 }}
                     />
+                    {profileErrors.email && <div style={{ color: "red", fontSize: 13 }}>{profileErrors.email}</div>}
                 </div>
                 <div style={{ marginBottom: 16 }}>
                     <label htmlFor="phone">Phone:</label>
@@ -127,6 +169,7 @@ function Profile() {
                         onChange={handleProfileChange}
                         style={{ width: "100%", padding: 8, marginTop: 4 }}
                     />
+                    {profileErrors.phone && <div style={{ color: "red", fontSize: 13 }}>{profileErrors.phone}</div>}
                 </div>
                 <button type="submit" style={{ width: "100%", padding: 10, background: "#2196f3", color: "#fff", border: "none", borderRadius: 6, fontWeight: 700 }}>
                     Update Profile
@@ -137,22 +180,27 @@ function Profile() {
                 <div style={{ marginBottom: 16 }}>
                     <label>Street:</label>
                     <input name="street" value={homeAddress.street} onChange={handleHomeChange} style={{ width: "100%", padding: 8, marginTop: 4 }} />
+                    {homeErrors.street && <div style={{ color: "red", fontSize: 13 }}>{homeErrors.street}</div>}
                 </div>
                 <div style={{ marginBottom: 16 }}>
                     <label>City:</label>
                     <input name="city" value={homeAddress.city} onChange={handleHomeChange} style={{ width: "100%", padding: 8, marginTop: 4 }} />
+                    {homeErrors.city && <div style={{ color: "red", fontSize: 13 }}>{homeErrors.city}</div>}
                 </div>
                 <div style={{ marginBottom: 16 }}>
                     <label>State:</label>
                     <input name="state" value={homeAddress.state} onChange={handleHomeChange} style={{ width: "100%", padding: 8, marginTop: 4 }} />
+                    {homeErrors.state && <div style={{ color: "red", fontSize: 13 }}>{homeErrors.state}</div>}
                 </div>
                 <div style={{ marginBottom: 16 }}>
                     <label>Postal Code:</label>
                     <input name="postal_code" value={homeAddress.postal_code} onChange={handleHomeChange} style={{ width: "100%", padding: 8, marginTop: 4 }} />
+                    {homeErrors.postal_code && <div style={{ color: "red", fontSize: 13 }}>{homeErrors.postal_code}</div>}
                 </div>
                 <div style={{ marginBottom: 16 }}>
                     <label>Country:</label>
                     <input name="country" value={homeAddress.country} onChange={handleHomeChange} style={{ width: "100%", padding: 8, marginTop: 4 }} />
+                    {homeErrors.country && <div style={{ color: "red", fontSize: 13 }}>{homeErrors.country}</div>}
                 </div>
                 <button type="submit" style={{ width: "100%", padding: 10, background: "#4caf50", color: "#fff", border: "none", borderRadius: 6, fontWeight: 700 }}>
                     Update Home/Shipping Address
@@ -163,22 +211,27 @@ function Profile() {
                 <div style={{ marginBottom: 16 }}>
                     <label>Street:</label>
                     <input name="street" value={billingAddress.street} onChange={handleBillingChange} style={{ width: "100%", padding: 8, marginTop: 4 }} />
+                    {billingErrors.street && <div style={{ color: "red", fontSize: 13 }}>{billingErrors.street}</div>}
                 </div>
                 <div style={{ marginBottom: 16 }}>
                     <label>City:</label>
                     <input name="city" value={billingAddress.city} onChange={handleBillingChange} style={{ width: "100%", padding: 8, marginTop: 4 }} />
+                    {billingErrors.city && <div style={{ color: "red", fontSize: 13 }}>{billingErrors.city}</div>}
                 </div>
                 <div style={{ marginBottom: 16 }}>
                     <label>State:</label>
                     <input name="state" value={billingAddress.state} onChange={handleBillingChange} style={{ width: "100%", padding: 8, marginTop: 4 }} />
+                    {billingErrors.state && <div style={{ color: "red", fontSize: 13 }}>{billingErrors.state}</div>}
                 </div>
                 <div style={{ marginBottom: 16 }}>
                     <label>Postal Code:</label>
                     <input name="postal_code" value={billingAddress.postal_code} onChange={handleBillingChange} style={{ width: "100%", padding: 8, marginTop: 4 }} />
+                    {billingErrors.postal_code && <div style={{ color: "red", fontSize: 13 }}>{billingErrors.postal_code}</div>}
                 </div>
                 <div style={{ marginBottom: 16 }}>
                     <label>Country:</label>
                     <input name="country" value={billingAddress.country} onChange={handleBillingChange} style={{ width: "100%", padding: 8, marginTop: 4 }} />
+                    {billingErrors.country && <div style={{ color: "red", fontSize: 13 }}>{billingErrors.country}</div>}
                 </div>
                 <button type="submit" style={{ width: "100%", padding: 10, background: "#ff9800", color: "#fff", border: "none", borderRadius: 6, fontWeight: 700 }}>
                     Update Billing Address

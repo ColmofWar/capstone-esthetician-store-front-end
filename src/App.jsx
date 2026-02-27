@@ -8,6 +8,7 @@ import UserContext from "./UserContext";
 import { apiRequest } from "./api";
 
 function App() {
+  const [cart, setCart] = useState([]);
   const [token, setToken] = useLocalStorage("token", null);
   const [username] = useLocalStorage("username", null);
   const [currentUser, setCurrentUser] = useState(null);
@@ -96,7 +97,9 @@ function App() {
           billingAddress,
           setBillingAddress,
           addressLoading,
-          addressError
+          addressError,
+          cart,
+          setCart
         }}>
           <NavBar />
           <div className="app-container">

@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import UserContext from "../UserContext";
 import { apiRequest } from "../api";
 import { useNavigate } from "react-router-dom";
 
@@ -12,7 +13,7 @@ function Signup({ onSignup }) {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
-    // setToken will be provided by context in App.jsx
+    const { setToken } = useContext(UserContext);
     const navigate = useNavigate();
 
     const handleChange = (e) => {
