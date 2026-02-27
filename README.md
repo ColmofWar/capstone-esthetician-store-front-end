@@ -9,7 +9,7 @@ Esthetician Store is an e-commerce web application for beauty and skincare produ
 - **User Authentication:** Sign up, log in, and persistent sessions using context and local storage.
 - **Product Catalog:** Browse all products, filter by category and price, and view product details.
 - **Shopping Cart:** Add, update, and remove items; view cart summary and proceed to checkout.
-- **Order Placement:** Review order summary and confirm purchase; cart is cleared after purchase.
+- **Order Placement:** Review order summary and confirm purchase; cart is cleared after purchase. This is a partially complete feature as purchases are not finalized until a payment processor is added.
 - **Profile Management:** Update profile info, shipping, and billing addresses with validation.
 - **Form Validation:** Prevents bad requests and ensures data integrity for all forms.
 - **Error Handling:** User-friendly error messages for failed actions or invalid input.
