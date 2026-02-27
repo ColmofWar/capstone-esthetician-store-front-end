@@ -1,8 +1,10 @@
 // API utility for frontend requests
 
-import axios from "axios";
 
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
+import axios from "axios";
+import { getEnvVar } from "./env";
+
+const BASE_URL = getEnvVar("VITE_API_URL", "http://localhost:3001");
 
 /**
  * @param {string} endpoint - API endpoint (e.g., '/products')
