@@ -7,7 +7,7 @@ export default defineConfig({
     host: true,
     strictPort: true,
     port: process.env.PORT || 3000,
-    allowedHosts: ['localhost', 'capstone-esthetician-store-front-end.onrender.com'],
+    allowedHosts: ['localhost', process.env.HOST],
     
   },
   plugins: [react()],
