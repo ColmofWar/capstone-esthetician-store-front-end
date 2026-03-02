@@ -4,7 +4,7 @@
 import axios from "axios";
 import { getEnvVar } from "./env";
 
-const BASE_URL = getEnvVar("VITE_API_URL", "http://localhost:3001");
+const BASE_URL = getEnvVar("VITE_API_URL", "API_URL", "http://localhost:3001");
 
 /**
  * @param {string} endpoint - API endpoint (e.g., '/products')
