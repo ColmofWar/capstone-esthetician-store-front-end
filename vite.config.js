@@ -7,7 +7,7 @@ export default defineConfig({
     host: true,
     strictPort: true,
     port: process.env.PORT || 3000,
-    allowedHosts: ['localhost', process.env.HOST],
+    allowedHosts: [process.env.HOST, 'localhost'],
     
   },
   plugins: [react()],
