@@ -1,3 +1,5 @@
+// Debug: Log all available environment variables at runtime
+console.log('import.meta.env:', import.meta.env);
 // src/env.js
 export function getEnvVar(key, fallback) {
   if (typeof process !== "undefined" && process.env && process.env[key]) {

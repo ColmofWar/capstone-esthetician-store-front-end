@@ -2,9 +2,9 @@
 
 
 import axios from "axios";
-import { getEnvVar } from "./env";
 
-const BASE_URL = getEnvVar(VITE_API_URL);
+const BASE_URL = import.meta.env.VITE_API_URL;
+console.log("API Base URL:", BASE_URL);
 
 
 /**
