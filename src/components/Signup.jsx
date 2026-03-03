@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import UserContext from "../UserContext";
 import { apiRequest } from "../api";
 import { useNavigate } from "react-router-dom";
-
+import useLocalStorage from "../hooks/useLocalStorage";
 
 function Signup({ onSignup }) {
     const [form, setForm] = useState({
@@ -39,10 +39,12 @@ function Signup({ onSignup }) {
                 const user = await apiRequest(`/users/${payload.username}`);
                 setCurrentUser(user);
                 localStorage.setItem("user", JSON.stringify(user));
+                localStorage.setItem("username", JSON.stringify(payload.username));
             } catch (e) {
                 // fallback: store username only if user fetch fails
                 setCurrentUser({ username: payload.username });
                 localStorage.setItem("user", JSON.stringify({ username: payload.username }));
+                localStorage.setItem("username", JSON.stringify(payload.username));
             }
             navigate("/");
         } catch (err) {

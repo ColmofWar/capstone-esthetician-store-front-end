@@ -9,9 +9,10 @@ function Login() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
-    const { setToken } = useContext(UserContext);
-    const navigate = useNavigate();
+    const { setToken: setTokenContext } = useContext(UserContext);
+    const [token, setToken] = useLocalStorage("token", null);
     const [storedUsername, setStoredUsername] = useLocalStorage("username", null);
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -22,7 +23,8 @@ function Login() {
                 method: "post",
                 data: { username, password }
             });
-            setToken(res.token);
+            setToken(res.token); // useLocalStorage setter
+            setTokenContext && setTokenContext(res.token); // update context if needed
             // Decode the token to get the username
             const payload = JSON.parse(atob(res.token.split('.')[1]));
             setStoredUsername(payload.username);
