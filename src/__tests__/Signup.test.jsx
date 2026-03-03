@@ -1,6 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import Signup from "../components/Signup";
+import UserContext from "../UserContext";
 import { MemoryRouter } from "react-router-dom";
 
 // Mock apiRequest
@@ -16,12 +17,15 @@ describe("Signup", () => {
     window.setToken = jest.fn();
   });
 
+  let setToken, setCurrentUser;
   function renderSignup() {
-    // Provide setToken via global for test
-    window.setToken = jest.fn();
+    setToken = jest.fn();
+    setCurrentUser = jest.fn();
     return render(
       <MemoryRouter>
-        <Signup />
+        <UserContext.Provider value={{ setToken, setCurrentUser }}>
+          <Signup />
+        </UserContext.Provider>
       </MemoryRouter>
     );
   }
@@ -57,7 +61,7 @@ describe("Signup", () => {
     fireEvent.click(screen.getByRole("button", { name: /Sign Up/i }));
     await waitFor(() => {
       expect(apiRequest).toHaveBeenCalledWith("/users", expect.any(Object));
-      expect(window.setToken).toHaveBeenCalledWith(fakeToken);
+      expect(setToken).toHaveBeenCalledWith(fakeToken);
       expect(screen.getByText(/User registered successfully/i)).toBeInTheDocument();
     });
   });
