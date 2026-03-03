@@ -13,7 +13,7 @@ function Signup({ onSignup }) {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
-    const { setToken } = useContext(UserContext);
+    const { setToken, setCurrentUser } = useContext(UserContext);
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -37,9 +37,11 @@ function Signup({ onSignup }) {
             // Fetch full user object and store in localStorage
             try {
                 const user = await apiRequest(`/users/${payload.username}`);
+                setCurrentUser(user);
                 localStorage.setItem("user", JSON.stringify(user));
             } catch (e) {
                 // fallback: store username only if user fetch fails
+                setCurrentUser({ username: payload.username });
                 localStorage.setItem("user", JSON.stringify({ username: payload.username }));
             }
             navigate("/");
