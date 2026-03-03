@@ -4,12 +4,12 @@ import { useNavigate } from "react-router-dom";
 import UserContext from "../UserContext";
 import useLocalStorage from "../hooks/useLocalStorage";
 
-function Login() {
+function Login({ onLogin }) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
-    const { setToken: setTokenContext } = useContext(UserContext);
+    const { setToken: setTokenContext, setCurrentUser } = useContext(UserContext);
     const [token, setToken] = useLocalStorage("token", null);
     const [storedUsername, setStoredUsername] = useLocalStorage("username", null);
     const navigate = useNavigate();
@@ -23,21 +23,36 @@ function Login() {
                 method: "post",
                 data: { username, password }
             });
-            setToken(res.token); // useLocalStorage setter
+            // Set token and username using their setters
+            await Promise.all([
+                setToken(res.token),
+                setStoredUsername(() => {
+                    const payload = JSON.parse(atob(res.token.split('.')[1]));
+                    return payload.username;
+                })
+            ]);
             setTokenContext && setTokenContext(res.token); // update context if needed
             // Decode the token to get the username
             const payload = JSON.parse(atob(res.token.split('.')[1]));
-            setStoredUsername(payload.username);
-            // Fetch full user object and store in localStorage
+            // Wait for state updates to propagate
+            await new Promise(resolve => setTimeout(resolve, 0));
+            // Fetch full user object and store in localStorage, set context before signaling parent
+            let userObj = { username: payload.username };
             try {
                 const user = await apiRequest(`/users/${payload.username}`);
+                setCurrentUser && setCurrentUser(user);
                 localStorage.setItem("user", JSON.stringify(user));
+                userObj = user;
             } catch (e) {
                 // fallback: store username only if user fetch fails
+                setCurrentUser && setCurrentUser({ username: payload.username });
                 localStorage.setItem("user", JSON.stringify({ username: payload.username }));
             }
+            if (onLogin) onLogin(userObj);
+            // Wait for context update before signaling parent
+            await new Promise(resolve => setTimeout(resolve, 0));
             console.log("Login successful, token:", res.token);
-            navigate("/");
+            // Navigation handled by parent (AuthPage)
         } catch (err) {
             setError(err.message || "Login failed");
         } finally {

@@ -1,6 +1,6 @@
 # Esthetician Store Front-End
 
-[Live Site](YOUR_DEPLOYED_URL_HERE)
+[Live Site][(https://capstone-esthetician-store-front-end-1.onrender.com)]
 
 ## Overview
 Esthetician Store is an e-commerce web application for beauty and skincare products. Users can browse products, filter by category or price, add items to their cart, sign up, log in, manage their profile and addresses, and complete purchases securely.
