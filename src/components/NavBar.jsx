@@ -30,9 +30,11 @@ function NavBar({ cartCount = 0 }) {
             </Link>
 
             <div className="navbar__links">
-                <Link to="/" className="navlink navlink--active">Home</Link>
-                <Link to="/shop" className="navlink">Shop</Link>
-                <Link to="/profile" className="navlink">Profile</Link>
+                    <Link to="/" className="navlink navlink--active">Home</Link>
+                    <Link to="/shop" className="navlink">Shop</Link>
+                    {currentUser && (
+                        <Link to="/profile" className="navlink">Profile</Link>
+                    )}
             </div>
 
             <div className="nav-action">
